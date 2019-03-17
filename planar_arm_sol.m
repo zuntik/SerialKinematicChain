@@ -23,7 +23,7 @@ function [sols] = planar_arm_sol( pos, a1, a2, alpha )
     c2 = (pos(1)^2+pos(2)^2-a1^2-a2^2)/(2*a1*a2);
     s2 = [ -sqrt(1-c2^2) sqrt(1-c2^2) ];
     theta2 = acos((pos(1)^2+pos(2)^2-a1^2-a2^2)/(2*a1*a2));
-    theta2(2) = -theta2(1)
+    theta2(2) = -theta2(1);
 
     s1(1) = ((a1 + a2*c2)*pos(2) - a2*s2(1)*pos(1))/(norm(pos)^2);
     c1(1) = ((a1 + a2*c2)*pos(1) - a2*s2(1)*pos(2))/(norm(pos)^2);
