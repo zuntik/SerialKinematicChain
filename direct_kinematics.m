@@ -1,4 +1,4 @@
-function [n,s,a,p] = direct_kinematics(theta, a, d, alpha)
+function [n,s,a,p] = direct_kinematics(theta, ai, di, alphai)
 %direct_kinematics Calculates the direct kinematics for the robot arm of
 %the lab
 
@@ -23,9 +23,9 @@ function [n,s,a,p] = direct_kinematics(theta, a, d, alpha)
 
     mat = eye(4);
     for i = 1:length(theta)
-        b1= prev_to_aux(theta(i),d(i));
-        b2 =aux_to_next(alpha(i),a(i));
-        mat = mat*prev_to_aux(theta(i),d(i))*aux_to_next(alpha(i),a(i));
+        b1= prev_to_aux(theta(i),di(i));
+        b2 =aux_to_next(alphai(i),ai(i));
+        mat = mat*prev_to_aux(theta(i),di(i))*aux_to_next(alphai(i),ai(i));
     end
 
     n = mat(1:3,1);
