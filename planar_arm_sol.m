@@ -13,14 +13,14 @@ function [sols] = planar_arm_sol( pos, a1, a2, alpha )
     end;
 
     c2 = (norm(pos)^2-a1^2-a2^2)/(2*a1*a2);
-    s2 = sqrt(1-c2^2);
-    theta2 = acos((pos(1)^2+pos(2)^2-a1^2-a2^2)/(2*a1*a2));
-    theta2(2) = -theta2(1);
+    s2 = [sqrt(1-c2^2) -sqrt(1-c2^2)];
+    theta2 = [atan2(s2(1), c2) atan2(s2(2), c2)]; 
 
-    beta=atan((a2*s2)/(a1+a2*c2));
-    gama=atan(pos(2)/pos(1));
+    s1 = [((a1+a2*c2)*pos(2)-a2*s2(1)*pos(1))/(norm(pos)^2),((a1+a2*c2)*pos(2)-a2*s2(2)*pos(1))/(norm(pos)^2)];
+    c1 = [((a1+a2*c2)*pos(1)+a2*s2(1)*pos(2))/(norm(pos)^2),((a1+a2*c2)*pos(1)+a2*s2(2)*pos(2))/(norm(pos)^2)];
 
-    theta1=[gama-beta gama+beta];
+    theta1 = [atan2(s1(1), c1(1)), atan2(s1(2), c1(2))];
+    
     theta3 = [alpha alpha] - theta1 - theta2;
 
     sols = vertcat(theta1,theta2,theta3).';
