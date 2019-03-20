@@ -21,39 +21,50 @@ function [theta] = reverse_kinematics( position, r_matrix )
     %   this will give the values for theta 2 and theta 3
  
     planar_sols1 = planar_arm_sol([norm(p_w(1:2)) -p_w(3)]-[ai(1) -di(1)],ai(2),norm([ai(3) di(4)]),0);
-    
-    % if the following function return empty array it's because the solution
-    % is impossible, this is because the arms will not be long enough
     planar_sols2 = planar_arm_sol([norm(p_w(1:2)) -p_w(3)]-[-ai(1) -di(1)],ai(2),norm([ai(3) di(4)]),0);
 
     adaptation_angle = atan(di(4)/ai(3));
     
-    theta2 = planar_sols1(:,1);
-    theta3 = planar_sols1(:,2) - adaptation_angle;
-
-    theta2_v2 = planar_sols2(:,1);
-    theta3_v2 = planar_sols2(:,2) - adaptation_angle ;
-
+    if not(isempty(planar_sols1))
+        theta2 = planar_sols1(:,1);
+        theta3 = planar_sols1(:,2) - adaptation_angle;        
+    end
+    if not(isempty(planar_sols2))
+        theta2_v2 = planar_sols2(:,1);
+        theta3_v2 = planar_sols2(:,2) - adaptation_angle ;
+    end
+        
     % calculate rotation matrix and position of the 4th join for the,
     % potentially 4 solutions of the planar_arm_sol
     % this can be done by doing the forward kinematics till the point
 
-    [n,s,a,p]=direct_kinematics([theta1(1) theta2(1) theta3(1)],ai,di,alphai);
-    r3_0(:,:,1) = [n,s,a];
-    [n,s,a,p]=direct_kinematics([theta1(1) theta2(2) theta3(2)],ai,di,alphai);
-    r3_0(:,:,2) = [n,s,a];
-    [n,s,a,p]=direct_kinematics([theta1(2) theta2_v2(1) theta3_v2(1)],ai,di,alphai);
-    r3_0(:,:,3) = [n,s,a];
-    [n,s,a,p]=direct_kinematics([theta1(2) theta2_v2(2) theta3_v2(2)],ai,di,alphai);
-    r3_0(:,:,4) = [n,s,a];
+    if not(isempty(planar_sols1))
+        [n,s,a,p]=direct_kinematics([theta1(1) theta2(1) theta3(1)],ai,di,alphai);
+        r3_0(:,:,1) = [n,s,a];
+        [n,s,a,p]=direct_kinematics([theta1(1) theta2(2) theta3(2)],ai,di,alphai);
+        r3_0(:,:,2) = [n,s,a];
+    end
+    if not(isempty(planar_sols2))
+        [n,s,a,p]=direct_kinematics([theta1(2) theta2_v2(1) theta3_v2(1)],ai,di,alphai);
+        r3_0(:,:,3) = [n,s,a];
+        [n,s,a,p]=direct_kinematics([theta1(2) theta2_v2(2) theta3_v2(2)],ai,di,alphai);
+        r3_0(:,:,4) = [n,s,a];
+    end
 
+    if isempty(planar_sols1) && isempty(planar_sols2)
+       disp('error');
+    end
+    
+    r6_3 = zeros(3,3,4);
     for i = 1:4
         r6_3(:,:,i) = r3_0(:,:,i)^-1 * r_matrix;
-    end;
+    end
 
     % pass rotation matrix R^6_3 to spherical_wrist_sol
 
     theta = zeros(8,6);
+    
+    
     for i = 1:4
         spherical_sols = spherical_wrist_sol(r6_3(:,:,i));
         theta(i*2-1,4:6) = spherical_sols(1,:);
@@ -71,7 +82,6 @@ function [theta] = reverse_kinematics( position, r_matrix )
     theta(7,2:3) = [theta2_v2(2)  theta3_v2(2)];
     theta(8,2:3) = [theta2_v2(2)  theta3_v2(2)];
 
-    direct_kinematics(theta(2,:), ai,di,alphai)
     
     % if z of the 6th join is paralel to the z of the 4th joint then there are
     % infinite solutions but only one will be presented: theta(6)=theta(4)=0 

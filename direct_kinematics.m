@@ -23,8 +23,6 @@ function [n,s,a,p] = direct_kinematics(theta, ai, di, alphai)
 
     mat = eye(4);
     for i = 1:length(theta)
-        b1= prev_to_aux(theta(i),di(i));
-        b2 =aux_to_next(alphai(i),ai(i));
         mat = mat*prev_to_aux(theta(i),di(i))*aux_to_next(alphai(i),ai(i));
     end
 
