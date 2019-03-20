@@ -24,7 +24,7 @@ function [theta] = reverse_kinematics( position, r_matrix )
     
     % if the following function return empty array it's because the solution
     % is impossible, this is because the arms will not be long enough
-    planar_sols2 = planar_arm_sol([norm(p_w(1:2)) p_w(3)]-[-ai(1) di(1)],ai(2),norm([ai(3) di(4)]),0);
+    planar_sols2 = planar_arm_sol([norm(p_w(1:2)) -p_w(3)]-[-ai(1) -di(1)],ai(2),norm([ai(3) di(4)]),0);
 
     adaptation_angle = atan(di(4)/ai(3));
     
@@ -47,8 +47,6 @@ function [theta] = reverse_kinematics( position, r_matrix )
     [n,s,a,p]=direct_kinematics([theta1(2) theta2_v2(2) theta3_v2(2)],ai,di,alphai);
     r3_0(:,:,4) = [n,s,a];
 
-    %disp( [ r3_0(:,:,1) r3_0(:,:,2) r3_0(:,:,3) r3_0(:,:,4) ] );
-
     for i = 1:4
         r6_3(:,:,i) = r3_0(:,:,i)^-1 * r_matrix;
     end;
@@ -64,10 +62,6 @@ function [theta] = reverse_kinematics( position, r_matrix )
         theta(i+4,1) = theta1(2);
     end;
 
-%    theta(1:2,2:3) = [theta2 theta3];
-%    theta(3:4,2:3) = [theta2 theta3];
-%    theta(5:6,2:3) = [theta2_v2 theta3_v2];
-%    theta(7:8,2:3) = [theta2_v2 theta3_v2];
     theta(1,2:3) = [theta2(1) theta3(1)];
     theta(2,2:3) = [theta2(1) theta3(1)];
     theta(3,2:3) = [theta2(2) theta3(2)];
