@@ -6,16 +6,21 @@ function [theta] = reverse_kinematics( position, r_matrix )
 % theta is a n x 6 matrix where n is the number of possible solutions
 
     % all values in cm
-    ai =     [   3     12   2       0       0       0   ];
-    di =     [   9.9   0     0       13      0       3   ];
-    alphai = [ pi/2  0    pi/2   -pi/2    pi/2   0   ];
+    ai =     [ 3     12   2      0       0       0   ];
+    di =     [ 9.9   0    0      13      0       3   ];
+    alphai = [ pi/2  0    pi/2   -pi/2   pi/2    0   ];
     
     % p_w is the position of the base of the joint of the spherical wrist
     p_w = position - di(6) * r_matrix(:,3);
 
-    %if 
-        
-    theta1(1) = atan2(p_w(2),p_w(1));
+    if p_w(2) == 0 && p_w(1) == 0
+        theta1(1) = 0;        
+        if sum(abs(rot(:,3)-[ 0 0 1 ].'))<3*10e-5
+            disp('Here we have infinite solutions');
+        end
+    else
+        theta1(1) = atan2(p_w(2),p_w(1));
+    end
     theta1(2) = rem(theta1(1) + pi, 2*pi );
 
     % now we solve the two-link planar arm problem
@@ -53,9 +58,7 @@ function [theta] = reverse_kinematics( position, r_matrix )
 
     for i = uint32(1:size(r3_0,3))
         j = idivide(i,2,'ceil');
-        disp([theta1(j) theta2(i) theta3(i)]*180/pi);
         [n,s,a,p]=direct_kinematics([theta1(j) theta2(i) theta3(i)],ai,di,alphai);
-        disp([p+a*di(4)]);
         r3_0(:,:,i) = [n,s,a];
     end
 
@@ -67,7 +70,6 @@ function [theta] = reverse_kinematics( position, r_matrix )
     % pass rotation matrix R^6_3 to spherical_wrist_sol
 
     theta = zeros(4*two_t1,6);
-    
     for i = 1:uint32(size(r6_3,3))
         spherical_sols = spherical_wrist_sol(r6_3(:,:,i));
         theta(i*2-1,4:6) = spherical_sols(1,:);
@@ -76,14 +78,9 @@ function [theta] = reverse_kinematics( position, r_matrix )
         theta(i*2,1) = theta1(idivide(i,2,'ceil'));
     end
     
-    
-    
     for i = uint32(1:size(theta,1))
         j = idivide(i,2,'ceil');
         theta(i,2:3) = [theta2(j) theta3(j)];
     end
-
-    % if z of the 6th join is paralel to the z of the 4th joint then there are
-    % infinite solutions but only one will be presented: theta(6)=theta(4)=0 
 
 end
