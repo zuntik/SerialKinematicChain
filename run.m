@@ -1,13 +1,9 @@
 function run()
 
     % all values in cm
-    %theta = [ pi 3*pi/4 3*pi/4 pi -pi/2 0 ];
-    theta = zeros(1,6);
-    theta = [ 0 0 0 0 0 pi/2 ];
-    theta = [ 1 2 3 4 5 6 ];
-    theta = [ 52  96 pi exp(1) 299 1003 ];
     %theta = [  3*pi/4 -3*pi/4 pi/4 pi/5 pi/6 pi/7 ];
-    %theta = [  0 -3*pi/4 pi/4 0 0 0 ];
+
+    theta = [ 0 0 pi/2 0 0 0 ];
     disp(theta*180/pi);
 
     ai =     [ 3      12   2       0       0      0   ];
@@ -17,9 +13,16 @@ function run()
     [n,s,a,p] = direct_kinematics( theta, ai, di, alphai );
     disp([n s a p]);
 
-   [theta] = reverse_kinematics(p, [n,s,a]);
+    p = [ 25; 0; 11.9 ];
+    rot = [
+        0 0 -1 
+        0 -1 0 
+        -1 0 0
+        ];
 
-   disp(theta*180/pi);
+   [theta] = reverse_kinematics(p, rot);
+
+   disp(round(theta*180/pi,2));
 
    disp(sprintf('there are %d solutions.',size(theta,1)));
    for i = 1:size(theta,1)
