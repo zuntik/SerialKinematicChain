@@ -5,6 +5,13 @@ function [theta] = reverse_kinematics( position, r_matrix )
 % r_matrix is 3 x 3 matrix
 % theta is a n x 6 matrix where n is the number of possible solutions
 
+    % No point in proceeding if det(r_matrix) != 1
+    if not(check_rot_validity(r_matrix) )
+        disp('impossible rotation matrix');
+        theta = [];
+        return
+    end
+
     % all values in cm
     ai =     [ 3     12   2      0       0       0   ];
     di =     [ 9.9   0    0      13      0       3   ];
