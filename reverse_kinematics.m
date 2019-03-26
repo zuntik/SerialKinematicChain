@@ -22,7 +22,7 @@ function [theta] = reverse_kinematics( position, r_matrix )
 
     if p_w(2) == 0 && p_w(1) == 0
         theta1(1) = 0;        
-        if sum(abs(rot(:,3)-[ 0 0 1 ].'))<3*10e-5
+        if sum(abs(r_matrix(:,3)-[ 0 0 1 ].'))<3*10e-5
             disp('Here we have infinite solutions');
         end
     else
@@ -67,7 +67,7 @@ function [theta] = reverse_kinematics( position, r_matrix )
         j = idivide(i,2,'ceil');
         [n,s,a,p]=direct_kinematics([theta1(j) theta2(i) theta3(i)],ai,di,alphai);
         r3_0(:,:,i) = [n,s,a];
-        if sum(abs(rot(:,3)-[ 0 0 1 ].'))<3*10e-5 || sum(abs(rot(:,3)-[ 0 0 -1 ].'))<3*10e-5
+        if sum(abs(r_matrix(:,3)-[ 0 0 1 ].'))<3*10e-5 || sum(abs(r_matrix(:,3)-[ 0 0 -1 ].'))<3*10e-5
             disp('Here we have infinite solutions if theta 1 moves oposotely to theta 4\n');
         end
     end
