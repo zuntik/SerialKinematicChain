@@ -29,5 +29,7 @@ function run()
        [n,s,a,p] = direct_kinematics( theta(i,:), ai, di, alphai );
        disp([n s a p]);
    end
+   
+   %dsadsadaasdasdasdsad
 
 end
