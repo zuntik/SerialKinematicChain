@@ -1,7 +1,11 @@
-function [n,s,a,p] = direct_kinematics(theta, ai, di, alphai)
+function [n,s,a,p] = direct_kinematics(theta)
 %direct_kinematics Calculates the direct kinematics for the robot arm of
 %the lab
 
+    ai =     [ 3      12   2       0       0      0   ];
+    di =     [ 9.9    0    0       13      0      3   ];
+    alphai = [ pi/2   0    pi/2   -pi/2    pi/2   0   ];
+    
     function m = prev_to_aux ( thta, d_ )
         m =  [
             cos(thta)   -sin(thta)  0  0
