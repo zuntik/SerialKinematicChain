@@ -5,3 +5,4 @@ function [val] = check_rot_validity( r_matrix )
     check_det = det(r_matrix)==1;
     val = (check_sizes == 1 && check_othogonality == 1 && check_det == 1);
 
+end
